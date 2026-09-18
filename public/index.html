@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sai Ram Acupuncture & Acupressure Clinic</title>
+  <meta name="description" content="Professional Acupuncture & Acupressure treatments in Buddha Nagar, Hyderabad. Book appointments, view diet plans, and check slot availability.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav-wrapper">
+      <div class="logo">
+        <div class="logo-icon">S</div>
+        <div class="logo-text">
+          <span class="logo-title">Sai Ram</span>
+          <span class="logo-tagline">Acupuncture & Acupressure</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#services" class="nav-link">Treatments</a>
+        <a href="#portal" class="nav-link">Patient Portal</a>
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Dark Mode">🌙</button>
+        <a href="#portal" class="btn btn-primary btn-sm" onclick="switchPortalTab('book')">Book Slot</a>
+        <a href="doctor.html" class="btn btn-secondary btn-sm">Doctor Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">✨ Traditional Healing • Modern Care</div>
+      <h1>Restore Your Body's Natural Balance & Vitality</h1>
+      <p>Experience the gentle, restorative power of classical acupuncture and therapeutic acupressure. Tailored treatments to alleviate pain, relieve stress, and optimize your digestive health.</p>
+      <div class="hero-cta">
+        <a href="#portal" class="btn btn-primary" onclick="switchPortalTab('book')">Book Appointment</a>
+        <a href="#portal" class="btn btn-secondary" onclick="switchPortalTab('diet')">View Diet & Health Plans</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About & Contact Details Section -->
+  <section id="about" class="section">
+    <div class="container split">
+      <div class="split-col">
+        <div class="img-frame">
+          <img src="images/hero.png" alt="Acupuncture therapy at Sai Ram Clinic">
+        </div>
+      </div>
+      <div class="split-col">
+        <h2 style="font-size: 36px; margin-bottom: 20px; color: var(--color-primary);">Sai Ram Acupuncture / Acupressure Clinic</h2>
+        <p class="mb-3">Located in West Hanuman Nagar, Buddha Nagar, we provide premium holistic healthcare targeting root causes of ailments rather than just masking symptoms. Our therapies are designed to promote wellness, enhance immunity, and coordinate Qi (energy flow) throughout the body.</p>
+        
+        <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+          <h4 style="color: var(--color-primary); margin-bottom: 12px; font-family: var(--font-sans); display: flex; align-items: center; gap: 8px;">
+            📍 Clinic Information
+          </h4>
+          <p class="mb-2"><strong>Address:</strong> 8, Street Number 4, opposite Balaji Pooja stores, West Hanuman Nagar, Buddha Nagar, Hyderabad, Telangana 500098</p>
+          <p class="mb-2"><strong>Timing:</strong> Monday to Friday: 6:30 PM - 8:30 PM (Saturday & Sunday Closed)</p>
+          <p class="mb-0"><strong>Phone:</strong> <a href="tel:+919247827384">+91 92478 27384</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="section" style="background-color: var(--color-primary-light); transition: background-color 0.3s ease;">
+    <div class="container">
+      <div class="section-header">
+        <h2>Holistic Treatments Offered</h2>
+        <p>We provide personalized care utilizing traditional, clinically proven meridian therapy methods.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">📌</div>
+          <h3>Acupuncture</h3>
+          <p>Insertion of ultra-thin sterile needles into targeted acupuncture points. Relieves chronic pain, regulates nervous system activity, and stimulates natural endorphins.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">👐</div>
+          <h3>Acupressure</h3>
+          <p>Gentle manual pressure applied on energy pathways. Extremely effective for tension headaches, muscle tightness, circulation, and physical relaxation.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🥗</div>
+          <h3>Diet & Lifestyle Chart</h3>
+          <p>Custom wellness and diet regimens built specifically for your body type. The doctor advises hot/cold food guidelines and active habits to speed up healing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials & Treatment Success Section -->
+  <section id="testimonials" class="section" style="border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); background-color: var(--bg-primary);">
+    <div class="container">
+      <div class="section-header">
+        <h2>Clinical Success & Patient Reviews</h2>
+        <p>Our acupuncture and acupressure treatment protocols under <strong>Dr. Saritha</strong> yield exceptionally high recovery rates. Read verified reviews from patients who experienced successful recovery.</p>
+      </div>
+
+      <!-- Treatment Success Rates Row -->
+      <div class="success-rates-container">
+        <div class="success-rate-card" style="border-color: var(--color-accent);">
+          <div class="success-rate-num">100%<span>★</span></div>
+          <div class="success-rate-label" style="color: var(--color-primary); font-weight: 800;">Fertility & Conception Success</div>
+          <div class="success-rate-desc">High success rates in balancing hormones, regulating cycles, and natural conception (even after multiple IVF failures).</div>
+        </div>
+        <div class="success-rate-card">
+          <div class="success-rate-num">98%</div>
+          <div class="success-rate-label">Severe Spine & Neck Relief</div>
+          <div class="success-rate-desc">Complete resolution of L2/L3 disc compressions, nerve pinch, sciatica, and severe back stiffness.</div>
+        </div>
+        <div class="success-rate-card">
+          <div class="success-rate-num">95%</div>
+          <div class="success-rate-label">Major Surgery Avoidance</div>
+          <div class="success-rate-desc">Successfully avoided advised surgeries for back slip discs, nerve pinches, and gynecological hysterectomies.</div>
+        </div>
+        <div class="success-rate-card">
+          <div class="success-rate-num">92%</div>
+          <div class="success-rate-label">Pulse-Based Diet Diagnostics</div>
+          <div class="success-rate-desc">Precise diagnosis of systemic root causes using classical pulse analysis and personalized birth vegetable/fruit charts.</div>
+        </div>
+      </div>
+
+      <!-- Sliding Reviews Marquee (No reviews under 5 stars) -->
+      <div class="reviews-marquee-container">
+        <div class="reviews-marquee-track">
+          <!-- Slide cards (Original list) -->
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I have been visiting Dr. Saritha's clinic for 3 years, and it's been truly transformative. She helped me with hormone balance and to naturally conceive. During my pregnancy, the care was exceptional. What I appreciate most is the holistic approach taken here—not just addressing symptoms but helping me restore healthier patterns.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Priyanka Madas</h5>
+                <p>Verified Patient • 2 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I am Dr G R Sravan Kumar, a medical officer in the govt sector. Dr. Saritha decreased my back pain in 15 days which I suffered from due to long sitting. I have not used any painkillers for almost 2 years now! She also successfully treated my wife for pre-menopause/hormonal issues, avoiding a hysterectomy suggested by gynecologists. 100% result in infertility treatments.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Dr. G. R. Sravan Kumar</h5>
+                <p>Verified MBBS Officer • 3 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Consulted Dr. Chanda Saritha for fertility related issue. After 4 years of marriage and 3 IVF failures, I got conceived naturally within 4 months of treatment! I could see a drastic increase in my blood flow patterns as well as endometrium thickness confirmed by scans. She understands patient history and suggests a good diet plan by seeing pulse.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Rachana Chepuri</h5>
+                <p>Verified Patient • 2 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I was having severe back pain and neck nerve compression, unable to move my head for 2 months. I went to so many hospitals and spent a lot of money, and was advised for a surgery. A neighbor told me about Dr. Saritha; the 2 months pain was gone in 2 weeks! I saw results in 2 days only. She guided me with a great diet chart.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Mammu S.B</h5>
+                <p>Verified Patient • 3 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I had a lower back pain (L2 & L3) for 5 years. I tried allopathy and homeopathy medicines with no relief, and doctors advised for surgery. After visiting Dr. Saritha Madam, within 2 months I got complete pain relief. Acupuncture/Acupressure is the one and only solution for all health issues. Thank you madam.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Raghu Godishala</h5>
+                <p>Verified Patient • 5 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I visited Dr. Saritha for severe shoulder pain where I couldn't lift my arm properly for over a month. Within just 12 sittings, my shoulder pain was completely relieved, and I regained normal movement. Her diagnostic skills, treatment approach, and pulse-based techniques are commendable. Highly recommend.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Vijayalakshmi Sreenivas</h5>
+                <p>Verified Patient • 2 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Dr. Saritha garu is truly a blessing for our family. My mother was suffering from multiple health issues and got complete relief through acupressure therapy and simple practical dietary changes. During my pregnancy, I went through a difficult phase with depression, and her treatment and guidance helped me immensely.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Spandana Reddy</h5>
+                <p>Verified Patient • 5 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Our whole family is being treated here. Mrs. Saritha treats with acupuncture/acupressure and also tells what diet is suitable for a person just by our pulse. She found the root cause for my sinusitis just by my pulse, and consuming my birth vegetable daily as per her instructions brought great changes.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Meghana Reddy</h5>
+                <p>Verified Patient • 3 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <!-- Duplicate list for seamless loop scrolling -->
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I have been visiting Dr. Saritha's clinic for 3 years, and it's been truly transformative. She helped me with hormone balance and to naturally conceive. During my pregnancy, the care was exceptional. What I appreciate most is the holistic approach taken here—not just addressing symptoms but helping me restore healthier patterns.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Priyanka Madas</h5>
+                <p>Verified Patient • 2 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I am Dr G R Sravan Kumar, a medical officer in the govt sector. Dr. Saritha decreased my back pain in 15 days which I suffered from due to long sitting. I have not used any painkillers for almost 2 years now! She also successfully treated my wife for pre-menopause/hormonal issues, avoiding a hysterectomy suggested by gynecologists. 100% result in infertility treatments.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Dr. G. R. Sravan Kumar</h5>
+                <p>Verified MBBS Officer • 3 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Consulted Dr. Chanda Saritha for fertility related issue. After 4 years of marriage and 3 IVF failures, I got conceived naturally within 4 months of treatment! I could see a drastic increase in my blood flow patterns as well as endometrium thickness confirmed by scans. She understands patient history and suggests a good diet plan by seeing pulse.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Rachana Chepuri</h5>
+                <p>Verified Patient • 2 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I was having severe back pain and neck nerve compression, unable to move my head for 2 months. I went to so many hospitals and spent a lot of money, and was advised for a surgery. A neighbor told me about Dr. Saritha; the 2 months pain was gone in 2 weeks! I saw results in 2 days only. She guided me with a great diet chart.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Mammu S.B</h5>
+                <p>Verified Patient • 3 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I had a lower back pain (L2 & L3) for 5 years. I tried allopathy and homeopathy medicines with no relief, and doctors advised for surgery. After visiting Dr. Saritha Madam, within 2 months I got complete pain relief. Acupuncture/Acupressure is the one and only solution for all health issues. Thank you madam.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Raghu Godishala</h5>
+                <p>Verified Patient • 5 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">I visited Dr. Saritha for severe shoulder pain where I couldn't lift my arm properly for over a month. Within just 12 sittings, my shoulder pain was completely relieved, and I regained normal movement. Her diagnostic skills, treatment approach, and pulse-based techniques are commendable. Highly recommend.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Vijayalakshmi Sreenivas</h5>
+                <p>Verified Patient • 2 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Dr. Saritha garu is truly a blessing for our family. My mother was suffering from multiple health issues and got complete relief through acupressure therapy and simple practical dietary changes. During my pregnancy, I went through a difficult phase with depression, and her treatment and guidance helped me immensely.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Spandana Reddy</h5>
+                <p>Verified Patient • 5 Months Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+
+          <div class="review-card">
+            <div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-text">Our whole family is being treated here. Mrs. Saritha treats with acupuncture/acupressure and also tells what diet is suitable for a person just by our pulse. She found the root cause for my sinusitis just by my pulse, and consuming my birth vegetable daily as per her instructions brought great changes.</p>
+            </div>
+            <div class="review-author">
+              <div class="author-info">
+                <h5>Meghana Reddy</h5>
+                <p>Verified Patient • 3 Years Ago</p>
+              </div>
+              <span class="verified-badge">✓ 5.0 Star</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portal Section (Booking & Lookup) -->
+  <section id="portal" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Interactive Patient Portal</h2>
+        <p>Book a treatment session or check your custom health diet plan prescribed by your doctor.</p>
+      </div>
+
+      <div class="portal-tabs">
+        <button id="tabBook" class="portal-tab-btn active" onclick="switchPortalTab('book')">📅 Book Appointment</button>
+        <button id="tabDiet" class="portal-tab-btn" onclick="switchPortalTab('diet')">🍎 Patient Dashboard & Diet Chart</button>
+      </div>
+
+      <!-- Tab 1: Booking Portal -->
+      <div id="sectionBook" class="portal-section active">
+        <div class="card" style="padding: 40px;">
+          <h3 class="mb-3 text-center">Schedule an Appointment</h3>
+          <p class="text-center mb-4">Select a date (Monday to Friday) to view available 30-minute time slots.</p>
+          
+          <div class="booking-grid">
+            <!-- Booking Details Form -->
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+              <div class="form-group">
+                <label for="bookingDate">Select Date</label>
+                <input type="date" id="bookingDate" class="form-control" required onchange="fetchAvailability()">
+              </div>
+              <div class="form-group">
+                <label for="patientName">Full Name</label>
+                <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="patientPhone">Phone Number</label>
+                <input type="tel" id="patientPhone" class="form-control" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+              </div>
+              <div class="form-group">
+                <label for="patientEmail">Email Address (Optional)</label>
+                <input type="email" id="patientEmail" class="form-control" placeholder="name@example.com">
+              </div>
+              <div class="booking-grid" style="gap: 15px; margin-bottom: 0px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="patientAge">Age (Optional)</label>
+                  <input type="number" id="patientAge" class="form-control" placeholder="Age" min="1" max="120">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="patientGender">Gender (Optional)</label>
+                  <select id="patientGender" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group mt-3">
+                <label for="bookingNotes">Symptoms & Notes (Optional)</label>
+                <textarea id="bookingNotes" class="form-control" rows="3" placeholder="Describe symptoms, e.g. chronic back stiffness, migraine, digestion issues..."></textarea>
+              </div>
+              <input type="hidden" id="selectedTime" required>
+              <button type="submit" class="btn btn-primary mt-3" style="width: 100%;">Confirm Appointment Booking</button>
+            </form>
+
+            <!-- Time Slots Grid -->
+            <div>
+              <h4 class="mb-2">Available Time Slots</h4>
+              <p class="text-secondary mb-3" id="slotsStatusText">Please select a date to view slots.</p>
+              <div id="slotsContainer" class="slots-container">
+                <!-- Slots will be dynamically rendered here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Diet Chart Lookup -->
+      <div id="sectionDiet" class="portal-section">
+        <div class="lookup-form">
+          <h3 class="mb-2">Patient Dashboard</h3>
+          <p class="mb-3">Enter your registered 10-digit mobile number to view your upcoming appointments and custom health diet charts.</p>
+          <div class="form-group" style="display: flex; gap: 10px; margin-bottom: 0;">
+            <input type="tel" id="lookupPhone" class="form-control" placeholder="Enter phone number" required pattern="[0-9]{10}">
+            <button class="btn btn-primary" onclick="handlePatientLookup()">Look Up</button>
+          </div>
+        </div>
+
+        <div id="lookupResults" style="display: none;">
+          <div class="patient-profile">
+            <!-- Left Column: Patient Profile Card -->
+            <div class="profile-card">
+              <div class="profile-avatar">👤</div>
+              <h3 id="displayPatientName" class="profile-name">-</h3>
+              <div class="profile-details">
+                <div class="profile-detail-row">
+                  <span>Patient ID:</span>
+                  <span id="displayPatientId">-</span>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Phone:</span>
+                  <span id="displayPatientPhone">-</span>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Age / Gender:</span>
+                  <span id="displayPatientAgeGender">-</span>
+                </div>
+                <div class="profile-detail-row">
+                  <span>Registered:</span>
+                  <span id="displayPatientRegistered">-</span>
+                </div>
+              </div>
+
+              <h4 class="mt-4 mb-2">Appointments History</h4>
+              <div id="displayApptsList" class="appt-list">
+                <!-- Appointments list -->
+              </div>
+            </div>
+
+            <!-- Right Column: Diet Plan Details -->
+            <div class="diet-plan-container">
+              <h3 style="color: var(--color-primary); font-family: var(--font-serif); font-size: 28px;">
+                Your Diet & Lifestyle Chart
+              </h3>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-top: -10px;" id="dietLastUpdated">Last updated: -</p>
+
+              <!-- Food to Avoid -->
+              <div class="diet-section-card">
+                <div class="diet-section-header avoid">
+                  <span>❌ Foods to Avoid</span>
+                </div>
+                <div class="diet-section-content">
+                  <ul id="dietAvoidList" class="diet-list avoid-list">
+                    <!-- Avoid items -->
+                  </ul>
+                  <p id="dietAvoidEmpty" class="text-secondary" style="display: none;">No restricted foods added by the doctor.</p>
+                </div>
+              </div>
+
+              <!-- Food to Recommend -->
+              <div class="diet-section-card">
+                <div class="diet-section-header recommend">
+                  <span>✅ Recommended Foods</span>
+                </div>
+                <div class="diet-section-content">
+                  <ul id="dietRecommendList" class="diet-list recommend-list">
+                    <!-- Recommend items -->
+                  </ul>
+                  <p id="dietRecommendEmpty" class="text-secondary" style="display: none;">No recommended foods added by the doctor.</p>
+                </div>
+              </div>
+
+              <!-- Daily Habits -->
+              <div class="diet-section-card">
+                <div class="diet-section-header info">
+                  <span>🌅 Daily Habits & Lifestyle</span>
+                </div>
+                <div class="diet-section-content">
+                  <p id="dietHabitsText">-</p>
+                </div>
+              </div>
+
+              <!-- Acupressure Care -->
+              <div class="diet-section-card">
+                <div class="diet-section-header info">
+                  <span>⚡ Home Acupressure Care</span>
+                </div>
+                <div class="diet-section-content">
+                  <p id="dietAcupressureText">-</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 style="font-family: var(--font-serif); font-size: 22px; color: var(--color-primary); margin-bottom: 12px;">Sai Ram Clinic</h4>
+          <p style="font-size: 14px;" class="mb-3">Premium holistic healing through traditional meridian balance. Offering personal care, clinical acupuncture, acupressure therapy, and dietary charts.</p>
+          <p style="font-size: 14px;"><strong>Address:</strong> Buddha Nagar, Near NIN Colony, Uppal Road, Hyderabad, Telangana.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Treatments</h4>
+          <ul class="footer-links">
+            <li><a href="#services">Classical Acupuncture</a></li>
+            <li><a href="#services">Trigger Point Therapy</a></li>
+            <li><a href="#services">Therapeutic Acupressure</a></li>
+            <li><a href="#services">Diet & Nutrition Chart</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About Clinic</a></li>
+            <li><a href="#portal" onclick="switchPortalTab('book')">Book Session</a></li>
+            <li><a href="#portal" onclick="switchPortalTab('diet')">View Diet Plan</a></li>
+            <li><a href="doctor.html">Doctor Dashboard</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Sai Ram Acupuncture / Acupressure Clinic. All Rights Reserved. Built with care for natural recovery.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Portal - Sai Ram Clinic</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Custom modifications for dashboard page */
+    body {
+      background-color: var(--bg-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Login Gate Screen -->
+  <div id="loginGate" class="login-container">
+    <div class="login-icon">🔒</div>
+    <h2 class="mb-2">Doctor Access</h2>
+    <p class="text-secondary mb-4">Please enter your clinic access credentials to manage appointments and patient charts.</p>
+    <form id="loginForm" onsubmit="handleDoctorLogin(event)">
+      <div class="form-group">
+        <input type="password" id="doctorPassword" class="form-control text-center" placeholder="Access Password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Unlock Portal</button>
+    </form>
+    <a href="index.html" class="btn btn-secondary mt-3" style="width: 100%;">Back to Client Website</a>
+  </div>
+
+  <!-- Main Dashboard Wrapper (Hidden until logged in) -->
+  <div id="dashboardWrapper" class="doc-wrapper" style="display: none;">
+    <!-- Sidebar -->
+    <aside class="doc-sidebar">
+      <div>
+        <div class="logo doc-logo">
+          <div class="logo-icon">S</div>
+          <div class="logo-text">
+            <span class="logo-title">Sai Ram</span>
+            <span class="logo-tagline">Doctor Panel</span>
+          </div>
+        </div>
+
+        <ul class="doc-menu">
+          <li>
+            <button class="doc-menu-btn active" id="menuAppts" onclick="switchDashboardTab('appts')">
+              📅 Appointments
+            </button>
+          </li>
+          <li>
+            <button class="doc-menu-btn" id="menuPatients" onclick="switchDashboardTab('patients')">
+              👥 Patient Registry
+            </button>
+          </li>
+          <li>
+            <button class="doc-menu-btn" id="menuSlots" onclick="switchDashboardTab('slots')">
+              ⚙️ Slot Scheduler
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <a href="index.html" class="btn btn-secondary btn-sm mb-2" style="width: 100%;">Client Website</a>
+        <button class="btn btn-primary btn-sm" onclick="handleLogout()" style="width: 100%; background-color: #ef4444; border-color: #ef4444;">🔒 Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="doc-content">
+      <!-- Quick Stats Widgets -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value" id="statTodayAppts">0</span>
+          <span class="stat-label">Appointments Today</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statTotalPatients">0</span>
+          <span class="stat-label">Registered Patients</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statPendingBookings">0</span>
+          <span class="stat-label">Scheduled Sessions</span>
+        </div>
+      </section>
+
+      <!-- Panel 1: Appointments List -->
+      <section id="panelAppts" class="portal-section active">
+        <div class="section-header" style="text-align: left; margin-bottom: 30px; max-width: 100%;">
+          <h2>Session Appointments</h2>
+          <p>List of all user bookings. Update patient charts or cancel/complete scheduled sessions.</p>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Age/Gender</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Treatment Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="apptsTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 2: Patients Registry -->
+      <section id="panelPatients" class="portal-section">
+        <div class="section-header" style="text-align: left; margin-bottom: 30px; max-width: 100%;">
+          <h2>Patient Profiles</h2>
+          <p>Search registered patients and manage their customized wellness diet charts.</p>
+        </div>
+
+        <div class="form-group mb-4" style="max-width: 400px; display: flex; gap: 10px;">
+          <input type="text" id="patientSearchInput" class="form-control" placeholder="Search by name or phone..." oninput="filterPatients()">
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Patient ID</th>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Age & Gender</th>
+                <th>Registration Date</th>
+                <th>Diet Chart Actions</th>
+              </tr>
+            </thead>
+            <tbody id="patientsTableBody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Panel 3: Slot Scheduler Config -->
+      <section id="panelSlots" class="portal-section">
+        <div class="section-header" style="text-align: left; margin-bottom: 30px; max-width: 100%;">
+          <h2>Time Slot Configurator</h2>
+          <p>Select a date to customize working hours. Block off slots for holidays, meetings, or personal leave.</p>
+        </div>
+
+        <div class="card" style="max-width: 600px;">
+          <div class="form-group">
+            <label for="slotConfigDate">Select Target Date</label>
+            <input type="date" id="slotConfigDate" class="form-control" onchange="fetchSlotSettings()">
+          </div>
+          
+          <div id="slotConfigContent" style="display: none; margin-top: 30px;">
+            <div class="form-group mb-4" style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-primary-light); padding: 15px; border-radius: var(--radius-sm);">
+              <div>
+                <strong>Block Entire Day</strong>
+                <p style="font-size: 12px;" class="text-secondary">Closes the clinic completely for this date</p>
+              </div>
+              <button id="btnBlockDay" class="btn btn-accent btn-sm" onclick="toggleBlockDay()">Block Day</button>
+            </div>
+
+            <div id="individualSlotsWrapper">
+              <h4 class="mb-2">Individual Slots Control</h4>
+              <p class="text-secondary mb-3" style="font-size: 13px;">Click on a green slot to block it. Click on a gray/crossed-out slot to open it.</p>
+              <div id="configSlotsGrid" class="slots-container">
+                <!-- Time slot list dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal 1: Edit Diet Plan Modal -->
+  <div id="dietModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="dietModalTitle">Customize Diet Chart</h3>
+        <button class="modal-close" onclick="closeModal('dietModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="dietPatientId">
+        
+        <div class="form-group">
+          <label for="dietAvoidInput">Foods to Avoid (One per line)</label>
+          <textarea id="dietAvoidInput" class="form-control" rows="4" placeholder="Ice cold water&#10;Deep fried oily foods&#10;Refined sugar"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="dietRecommendInput">Recommended Foods (One per line)</label>
+          <textarea id="dietRecommendInput" class="form-control" rows="4" placeholder="Warm ginger tea&#10;Steamed green vegetables&#10;Millet porridge"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="dietHabitsInput">Daily Habits & Lifestyle Guidelines</label>
+          <textarea id="dietHabitsInput" class="form-control" rows="3" placeholder="Walk for 15 minutes after meals. Sleep by 10:30 PM."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="dietAcupressureInput">Home Acupressure Care (Point guide)</label>
+          <textarea id="dietAcupressureInput" class="form-control" rows="3" placeholder="Press ST-36 twice daily. Massage LI-4 for tension relief."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('dietModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="savePatientDiet()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Notes / Update Status Modal -->
+  <div id="statusModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Update Appointment Status</h3>
+        <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="statusApptId">
+        
+        <div class="form-group">
+          <label for="apptStatusSelect">Status</label>
+          <select id="apptStatusSelect" class="form-control">
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="apptNotesInput">Treatment & Progress Notes</label>
+          <textarea id="apptNotesInput" class="form-control" rows="5" placeholder="E.g., Back pain reduced. Applied needles to GV-20, BL-23, ST-36. Patient reports better sleep."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('statusModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveApptStatus()">Save Status</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/doctor.js"></script>
+</body>
+</html>

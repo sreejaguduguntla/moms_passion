@@ -1,0 +1,17 @@
+{
+  "name": "moms-passion-sai-ram-acupuncture",
+  "version": "1.0.0",
+  "description": "Full-stack application for Sai Ram Acupuncture / Acupressure Clinic",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}

@@ -1,0 +1,108 @@
+{
+  "patients": [
+    {
+      "id": "P-1001",
+      "name": "Ramesh Kumar",
+      "phone": "9876543210",
+      "email": "ramesh@example.com",
+      "age": 45,
+      "gender": "Male",
+      "createdAt": "2026-08-25T10:00:00.000Z",
+      "dietPlan": {
+        "avoid": [
+          "Ice cold water and cold carbonated drinks",
+          "Deep-fried, heavy oils, and refined sugar",
+          "Excess raw foods (salads/cold fruits) after sunset"
+        ],
+        "recommend": [
+          "Warm water infused with sliced ginger and cumin",
+          "Steamed green leafy vegetables with minimal spices",
+          "Millet-based warm porridge for breakfast"
+        ],
+        "habits": "Walk for 15 minutes after dinner. Ensure sleeping by 10:30 PM to support liver meridian recovery.",
+        "acupressurePoints": "Press ST-36 (Zusanli) for 2 minutes daily to improve digestion. Press LI-4 (Hegu) for headaches or stress relief.",
+        "updatedAt": "2026-08-29T19:00:00.000Z"
+      }
+    },
+    {
+      "id": "P-1002",
+      "name": "Anjali Rao",
+      "phone": "9123456789",
+      "email": "anjali@example.com",
+      "age": 34,
+      "gender": "Female",
+      "createdAt": "2026-08-27T11:30:00.000Z",
+      "dietPlan": {
+        "avoid": [
+          "Processed dairy and cheese products",
+          "Spicy pickles and fermented foods",
+          "Caffeinated beverages after 3:00 PM"
+        ],
+        "recommend": [
+          "Warm chamomile and mint tea",
+          "Cooked rice, lentils (dal), and bottle gourd curry",
+          "Soaked almonds and walnuts in the morning"
+        ],
+        "habits": "Practice deep breathing (Pranayama) for 10 minutes in the morning. Keep mobile phone away 1 hour before sleep.",
+        "acupressurePoints": "Press SP-6 (Sanyinjiao) for hormone balance and calming the mind (avoid deep pressure if pregnant). Press PC-6 (Neiguan) for anxiety.",
+        "updatedAt": "2026-08-29T19:15:00.000Z"
+      }
+    },
+    {
+      "id": "P-1003",
+      "name": "Sreeja Guduguntla",
+      "phone": "9999988888",
+      "email": "sreeja@example.com",
+      "age": 25,
+      "gender": "Female",
+      "createdAt": "2026-08-30T17:37:51.874Z",
+      "dietPlan": {
+        "avoid": [],
+        "recommend": [],
+        "habits": "",
+        "acupressurePoints": "",
+        "updatedAt": "2026-08-30T17:37:51.874Z"
+      }
+    }
+  ],
+  "appointments": [
+    {
+      "id": "A-5001",
+      "patientId": "P-1001",
+      "date": "2026-08-31",
+      "time": "18:30",
+      "status": "scheduled",
+      "notes": "First follow-up on lower back stiffness and digestive bloating. Needles applied on BL-23, GV-4, ST-36.",
+      "createdAt": "2026-08-29T14:20:00.000Z"
+    },
+    {
+      "id": "A-5002",
+      "patientId": "P-1002",
+      "date": "2026-08-31",
+      "time": "19:30",
+      "status": "scheduled",
+      "notes": "Managing stress and migraine headaches. Points targeted: GB-20, LI-4, LV-3.",
+      "createdAt": "2026-08-29T15:10:00.000Z"
+    },
+    {
+      "id": "A-5003",
+      "patientId": "P-1003",
+      "date": "2026-08-31",
+      "time": "19:00",
+      "status": "scheduled",
+      "notes": "Severe migraine headaches and stress",
+      "createdAt": "2026-08-30T17:37:51.874Z"
+    }
+  ],
+  "settings": {
+    "doctorPassword": "doctor123",
+    "standardSlots": [
+      "18:30",
+      "19:00",
+      "19:30",
+      "20:00"
+    ],
+    "blockedDays": [],
+    "blockedSlots": {}
+  }
+}
