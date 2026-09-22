@@ -29,6 +29,15 @@ const defaultData = {
         habits: "Walk for 15 minutes after dinner. Ensure sleeping by 10:30 PM to support liver meridian recovery.",
         acupressurePoints: "Press ST-36 (Zusanli) for 2 minutes daily to improve digestion. Press LI-4 (Hegu) for headaches or stress relief.",
         updatedAt: "2026-08-29T19:00:00.000Z"
+      },
+      clinicalRecord: {
+        bp: "120/80 mmHg",
+        temperature: "98.6 °F",
+        pulseRate: "72 bpm",
+        bodyType: "Vata-Pitta",
+        tongueDescription: "Reddish tip with thin white coating",
+        tongueImage: "",
+        updatedAt: "2026-08-29T19:00:00.000Z"
       }
     },
     {
@@ -52,6 +61,15 @@ const defaultData = {
         ],
         habits: "Practice deep breathing (Pranayama) for 10 minutes in the morning. Keep mobile phone away 1 hour before sleep.",
         acupressurePoints: "Press SP-6 (Sanyinjiao) for hormone balance and calming the mind (avoid deep pressure if pregnant). Press PC-6 (Neiguan) for anxiety.",
+        updatedAt: "2026-08-29T19:15:00.000Z"
+      },
+      clinicalRecord: {
+        bp: "118/76 mmHg",
+        temperature: "98.4 °F",
+        pulseRate: "76 bpm",
+        bodyType: "Pitta-Kapha",
+        tongueDescription: "Pale tongue body with yellowish center coating",
+        tongueImage: "",
         updatedAt: "2026-08-29T19:15:00.000Z"
       }
     }
@@ -157,6 +175,15 @@ const db = {
         habits: "",
         acupressurePoints: "",
         updatedAt: new Date().toISOString()
+      },
+      clinicalRecord: {
+        bp: "",
+        temperature: "",
+        pulseRate: "",
+        bodyType: "",
+        tongueDescription: "",
+        tongueImage: "",
+        updatedAt: new Date().toISOString()
       }
     };
 
@@ -175,6 +202,25 @@ const db = {
       recommend: Array.isArray(dietData.recommend) ? dietData.recommend : [dietData.recommend || ""],
       habits: dietData.habits || "",
       acupressurePoints: dietData.acupressurePoints || "",
+      updatedAt: new Date().toISOString()
+    };
+
+    writeDB(data);
+    return data.patients[patientIndex];
+  },
+
+  updatePatientClinical: (id, clinicalData) => {
+    const data = readDB();
+    const patientIndex = data.patients.findIndex(p => p.id === id);
+    if (patientIndex === -1) return null;
+
+    data.patients[patientIndex].clinicalRecord = {
+      bp: clinicalData.bp || "",
+      temperature: clinicalData.temperature || "",
+      pulseRate: clinicalData.pulseRate || "",
+      bodyType: clinicalData.bodyType || "",
+      tongueDescription: clinicalData.tongueDescription || "",
+      tongueImage: clinicalData.tongueImage !== undefined ? clinicalData.tongueImage : (data.patients[patientIndex].clinicalRecord ? data.patients[patientIndex].clinicalRecord.tongueImage : ""),
       updatedAt: new Date().toISOString()
     };
 

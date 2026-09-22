@@ -102,7 +102,7 @@
                 <th>Age/Gender</th>
                 <th>Date & Time</th>
                 <th>Status</th>
-                <th>Treatment Notes</th>
+                <th>Notes & Clinical Info</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -117,7 +117,7 @@
       <section id="panelPatients" class="portal-section">
         <div class="section-header" style="text-align: left; margin-bottom: 30px; max-width: 100%;">
           <h2>Patient Profiles</h2>
-          <p>Search registered patients and manage their customized wellness diet charts.</p>
+          <p>Search registered patients, record clinical vitals (BP, Temp, Pulse, Tongue & Body Type), and manage wellness diet charts.</p>
         </div>
 
         <div class="form-group mb-4" style="max-width: 400px; display: flex; gap: 10px;">
@@ -129,11 +129,11 @@
             <thead>
               <tr>
                 <th>Patient ID</th>
-                <th>Name</th>
-                <th>Phone Number</th>
+                <th>Name & Contact</th>
                 <th>Age & Gender</th>
+                <th>Vitals & Body Type</th>
                 <th>Registration Date</th>
-                <th>Diet Chart Actions</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="patientsTableBody">
@@ -242,6 +242,78 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal('statusModal')">Cancel</button>
         <button class="btn btn-primary" onclick="saveApptStatus()">Save Status</button>
+      </div>
+    </div>
+  </div>
+
+      <!-- Modal 3: Patient Clinical & Vitals Modal -->
+  <div id="vitalsModal" class="modal-overlay">
+    <div class="modal" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 id="vitalsModalTitle">🩺 Patient Clinical Vitals & Evaluation</h3>
+        <button class="modal-close" onclick="closeModal('vitalsModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="vitalsPatientId">
+        
+        <div style="background-color: var(--color-primary-light); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <h4 style="margin-bottom: 4px; font-size: 15px; color: var(--color-primary-dark);">Vital Signs & Physical Examination</h4>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">Record patient vitals, Ayurvedic body type (Dosha), and tongue examination details.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px;" class="mb-3">
+          <div class="form-group">
+            <label for="vitalsBpInput">❤️ BP (Blood Pressure)</label>
+            <input type="text" id="vitalsBpInput" class="form-control" placeholder="e.g. 120/80 mmHg">
+          </div>
+          
+          <div class="form-group">
+            <label for="vitalsTempInput">🌡️ Temperature</label>
+            <input type="text" id="vitalsTempInput" class="form-control" placeholder="e.g. 98.6 °F">
+          </div>
+
+          <div class="form-group">
+            <label for="vitalsPulseInput">💓 Pulse Rate</label>
+            <input type="text" id="vitalsPulseInput" class="form-control" placeholder="e.g. 72 bpm">
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="vitalsBodyTypeSelect">🌿 Body Type (Ayurvedic Tridosha Evaluation)</label>
+          <select id="vitalsBodyTypeSelect" class="form-control">
+            <option value="">-- Select Body Type --</option>
+            <option value="Vata">Vata (Air & Ether dominant)</option>
+            <option value="Pitta">Pitta (Fire & Water dominant)</option>
+            <option value="Kapha">Kapha (Earth & Water dominant)</option>
+            <option value="Vata-Pitta">Vata-Pitta (Dual)</option>
+            <option value="Pitta-Kapha">Pitta-Kapha (Dual)</option>
+            <option value="Vata-Kapha">Vata-Kapha (Dual)</option>
+            <option value="Tridosha">Tridosha / Samadosha (Balanced V-P-K)</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="vitalsTongueDescInput">👅 Tongue Picture & Description</label>
+          <textarea id="vitalsTongueDescInput" class="form-control" rows="3" placeholder="Describe coating, color, moisture, cracks, or teeth marks (e.g., Pale body, thick white coating in center, red tip)."></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="vitalsTongueImageFile">📷 Upload Tongue Examination Photo</label>
+          <input type="file" id="vitalsTongueImageFile" accept="image/*" class="form-control" onchange="handleTongueImageUpload(event)">
+          <input type="hidden" id="vitalsTongueImageBase64">
+          
+          <div id="vitalsTonguePreviewWrapper" style="display: none; margin-top: 12px; padding: 10px; border: 1px dashed var(--color-border); border-radius: var(--radius-sm); text-align: center; background: #fafafa;">
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Uploaded Tongue Picture Preview:</p>
+            <img id="vitalsTongueImgPreview" src="" alt="Tongue Preview" style="max-height: 180px; max-width: 100%; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); object-fit: contain;">
+            <div style="margin-top: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="clearTongueImage()" style="color: #ef4444; border-color: #fca5a5;">🗑️ Remove Photo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('vitalsModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="savePatientClinicalRecord()">💾 Save Clinical Record</button>
       </div>
     </div>
   </div>

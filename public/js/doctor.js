@@ -159,6 +159,20 @@ function renderAppointmentsTable() {
 
     const ageGender = [appt.patientAge ? `${appt.patientAge} yrs` : null, appt.patientGender].filter(Boolean).join(' / ') || '-';
 
+    const patient = allPatients.find(p => p.id === appt.patientId);
+    const clinical = patient ? patient.clinicalRecord : null;
+    let vitalsSummaryHtml = '';
+    if (clinical) {
+      const parts = [];
+      if (clinical.bp) parts.push(`BP: ${clinical.bp}`);
+      if (clinical.temperature) parts.push(`Temp: ${clinical.temperature}`);
+      if (clinical.pulseRate) parts.push(`Pulse: ${clinical.pulseRate}`);
+      if (clinical.bodyType) parts.push(`Dosha: ${clinical.bodyType}`);
+      if (parts.length > 0) {
+        vitalsSummaryHtml = `<div style="font-size: 11px; margin-top: 4px; color: #15803d; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">${parts.join(' | ')}</div>`;
+      }
+    }
+
     tr.innerHTML = `
       <td>
         <strong>${appt.patientName}</strong><br>
@@ -172,10 +186,14 @@ function renderAppointmentsTable() {
       <td><span class="badge badge-${appt.status}">${appt.status}</span></td>
       <td style="max-width: 250px; font-size: 13px; color: var(--text-secondary);">
         ${appt.notes || '<em style="color:#aaa;">No notes added</em>'}
+        ${vitalsSummaryHtml}
       </td>
-      <td>
+      <td style="white-space: nowrap;">
         <button class="btn btn-secondary btn-sm" onclick="openStatusModal('${appt.id}', '${appt.status}', \`${escapeJSString(appt.notes)}\`)">
           ✏️ Edit Status
+        </button>
+        <button class="btn btn-accent btn-sm" onclick="openVitalsModal('${appt.patientId}')" style="margin-left: 4px;">
+          🩺 Vitals
         </button>
       </td>
     `;
@@ -215,15 +233,31 @@ function renderPatientsTable(list) {
     const regDate = new Date(patient.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     const ageGender = [patient.age ? `${patient.age} yrs` : null, patient.gender].filter(Boolean).join(' / ') || '-';
 
+    const clinical = patient.clinicalRecord || {};
+    const vitalsBadges = [];
+    if (clinical.bp) vitalsBadges.push(`<span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600;">BP: ${clinical.bp}</span>`);
+    if (clinical.temperature) vitalsBadges.push(`<span class="badge" style="background:#fef3c7; color:#92400e; font-weight:600;">Temp: ${clinical.temperature}</span>`);
+    if (clinical.pulseRate) vitalsBadges.push(`<span class="badge" style="background:#fce7f3; color:#9d174d; font-weight:600;">Pulse: ${clinical.pulseRate}</span>`);
+    if (clinical.bodyType) vitalsBadges.push(`<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:600;">Body: ${clinical.bodyType}</span>`);
+    if (clinical.tongueImage || clinical.tongueDescription) vitalsBadges.push(`<span class="badge" style="background:#f3e8ff; color:#6b21a8; font-weight:600;">👅 Tongue Exam</span>`);
+
+    const vitalsDisplay = vitalsBadges.length > 0 ? vitalsBadges.join(' ') : '<em style="color:#aaa; font-size:12px;">No vitals recorded</em>';
+
     tr.innerHTML = `
       <td><code>${patient.id}</code></td>
-      <td><strong>${patient.name}</strong></td>
-      <td>${patient.phone}</td>
-      <td>${ageGender}</td>
-      <td>${regDate}</td>
       <td>
+        <strong>${patient.name}</strong><br>
+        <span style="font-size:12px; color:var(--text-secondary);">${patient.phone}</span>
+      </td>
+      <td>${ageGender}</td>
+      <td style="max-width: 250px; line-height: 1.8;">${vitalsDisplay}</td>
+      <td>${regDate}</td>
+      <td style="white-space: nowrap;">
+        <button class="btn btn-accent btn-sm mb-1" onclick="openVitalsModal('${patient.id}')">
+          🩺 Clinical Vitals
+        </button>
         <button class="btn btn-primary btn-sm" onclick="openDietModal('${patient.id}')">
-          🍎 Custom Diet Chart
+          🍎 Custom Diet
         </button>
       </td>
     `;
@@ -244,6 +278,97 @@ function filterPatients() {
     p.id.toLowerCase().includes(query)
   );
   renderPatientsTable(filtered);
+}
+
+// --- CLINICAL VITALS MODAL DIALOG ---
+function openVitalsModal(patientId) {
+  const patient = allPatients.find(p => p.id === patientId);
+  if (!patient) return;
+
+  document.getElementById('vitalsPatientId').value = patient.id;
+  document.getElementById('vitalsModalTitle').textContent = `🩺 Vitals & Examination - ${patient.name}`;
+
+  const clinical = patient.clinicalRecord || {};
+
+  document.getElementById('vitalsBpInput').value = clinical.bp || '';
+  document.getElementById('vitalsTempInput').value = clinical.temperature || '';
+  document.getElementById('vitalsPulseInput').value = clinical.pulseRate || '';
+  document.getElementById('vitalsBodyTypeSelect').value = clinical.bodyType || '';
+  document.getElementById('vitalsTongueDescInput').value = clinical.tongueDescription || '';
+  document.getElementById('vitalsTongueImageBase64').value = clinical.tongueImage || '';
+  document.getElementById('vitalsTongueImageFile').value = '';
+
+  const previewWrapper = document.getElementById('vitalsTonguePreviewWrapper');
+  const imgPreview = document.getElementById('vitalsTongueImgPreview');
+
+  if (clinical.tongueImage) {
+    imgPreview.src = clinical.tongueImage;
+    previewWrapper.style.display = 'block';
+  } else {
+    imgPreview.src = '';
+    previewWrapper.style.display = 'none';
+  }
+
+  openModal('vitalsModal');
+}
+
+function handleTongueImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (file.size > 8 * 1024 * 1024) {
+    showToast("Selected image is too large. Please select a photo under 8MB.", "error");
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64Str = e.target.result;
+    document.getElementById('vitalsTongueImageBase64').value = base64Str;
+    
+    const imgPreview = document.getElementById('vitalsTongueImgPreview');
+    imgPreview.src = base64Str;
+    document.getElementById('vitalsTonguePreviewWrapper').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearTongueImage() {
+  document.getElementById('vitalsTongueImageFile').value = '';
+  document.getElementById('vitalsTongueImageBase64').value = '';
+  document.getElementById('vitalsTongueImgPreview').src = '';
+  document.getElementById('vitalsTonguePreviewWrapper').style.display = 'none';
+}
+
+async function savePatientClinicalRecord() {
+  const patientId = document.getElementById('vitalsPatientId').value;
+  const bp = document.getElementById('vitalsBpInput').value.trim();
+  const temperature = document.getElementById('vitalsTempInput').value.trim();
+  const pulseRate = document.getElementById('vitalsPulseInput').value.trim();
+  const bodyType = document.getElementById('vitalsBodyTypeSelect').value;
+  const tongueDescription = document.getElementById('vitalsTongueDescInput').value.trim();
+  const tongueImage = document.getElementById('vitalsTongueImageBase64').value;
+
+  const payload = { bp, temperature, pulseRate, bodyType, tongueDescription, tongueImage };
+
+  try {
+    const res = await fetch(`/api/doctor/patients/${patientId}/clinical`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to update clinical record");
+
+    showToast("Clinical record & vitals saved successfully!");
+    closeModal('vitalsModal');
+    updateDashboardData(); // Refresh table & metrics
+
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
 }
 
 // --- DIET CHART MODAL DIALOG ---

@@ -278,8 +278,31 @@ async function handlePatientLookup() {
       });
     }
 
+    // Display Clinical Vitals & Body Type
+    const clinical = patient.clinicalRecord || {};
+    const vitalsCard = document.getElementById('clientVitalsCard');
+    const tongueWrapper = document.getElementById('displayClientTongueWrapper');
+
+    if (clinical.bp || clinical.temperature || clinical.pulseRate || clinical.bodyType || clinical.tongueDescription) {
+      document.getElementById('displayClientBp').textContent = clinical.bp || 'Not recorded';
+      document.getElementById('displayClientTemp').textContent = clinical.temperature || 'Not recorded';
+      document.getElementById('displayClientPulse').textContent = clinical.pulseRate || 'Not recorded';
+      document.getElementById('displayClientBodyType').textContent = clinical.bodyType || 'Not specified';
+      
+      if (clinical.tongueDescription) {
+        document.getElementById('displayClientTongueDesc').textContent = clinical.tongueDescription;
+        tongueWrapper.style.display = 'block';
+      } else {
+        tongueWrapper.style.display = 'none';
+      }
+      
+      vitalsCard.style.display = 'block';
+    } else {
+      vitalsCard.style.display = 'none';
+    }
+
     // Display Diet Chart
-    const diet = patient.dietPlan;
+    const diet = patient.dietPlan || {};
     
     if (diet && diet.updatedAt) {
       const updatedDate = new Date(diet.updatedAt).toLocaleDateString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short', year: 'numeric' });

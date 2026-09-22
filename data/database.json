@@ -22,6 +22,15 @@
         "habits": "Walk for 15 minutes after dinner. Ensure sleeping by 10:30 PM to support liver meridian recovery.",
         "acupressurePoints": "Press ST-36 (Zusanli) for 2 minutes daily to improve digestion. Press LI-4 (Hegu) for headaches or stress relief.",
         "updatedAt": "2026-08-29T19:00:00.000Z"
+      },
+      "clinicalRecord": {
+        "bp": "120/80 mmHg",
+        "temperature": "98.6 °F",
+        "pulseRate": "72 bpm",
+        "bodyType": "Vata-Pitta",
+        "tongueDescription": "Red tip with light white coating",
+        "tongueImage": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "updatedAt": "2026-09-22T17:50:59.879Z"
       }
     },
     {
@@ -46,6 +55,15 @@
         "habits": "Practice deep breathing (Pranayama) for 10 minutes in the morning. Keep mobile phone away 1 hour before sleep.",
         "acupressurePoints": "Press SP-6 (Sanyinjiao) for hormone balance and calming the mind (avoid deep pressure if pregnant). Press PC-6 (Neiguan) for anxiety.",
         "updatedAt": "2026-08-29T19:15:00.000Z"
+      },
+      "clinicalRecord": {
+        "bp": "118/76 mmHg",
+        "temperature": "98.4 °F",
+        "pulseRate": "76 bpm",
+        "bodyType": "Pitta-Kapha",
+        "tongueDescription": "Pale tongue body with center coating",
+        "tongueImage": "",
+        "updatedAt": "2026-08-29T19:15:00.000Z"
       }
     },
     {
@@ -62,6 +80,40 @@
         "habits": "",
         "acupressurePoints": "",
         "updatedAt": "2026-08-30T17:37:51.874Z"
+      },
+      "clinicalRecord": {
+        "bp": "110/70 mmHg",
+        "temperature": "98.2 °F",
+        "pulseRate": "70 bpm",
+        "bodyType": "Pitta",
+        "tongueDescription": "Normal moisture with pinkish tip",
+        "tongueImage": "",
+        "updatedAt": "2026-08-30T17:37:51.874Z"
+      }
+    },
+    {
+      "id": "P-1004",
+      "name": "Sreeja Guduguntla",
+      "phone": "8317544742",
+      "email": "sreejaguduguntla@gmail.com",
+      "age": 20,
+      "gender": "Female",
+      "createdAt": "2026-09-19T17:12:56.752Z",
+      "dietPlan": {
+        "avoid": [],
+        "recommend": [],
+        "habits": "",
+        "acupressurePoints": "",
+        "updatedAt": "2026-09-19T17:12:56.752Z"
+      },
+      "clinicalRecord": {
+        "bp": "122/82 mmHg",
+        "temperature": "98.6 °F",
+        "pulseRate": "74 bpm",
+        "bodyType": "Vata-Kapha",
+        "tongueDescription": "Thin white coating",
+        "tongueImage": "",
+        "updatedAt": "2026-09-19T17:12:56.752Z"
       }
     }
   ],
@@ -71,7 +123,7 @@
       "patientId": "P-1001",
       "date": "2026-08-31",
       "time": "18:30",
-      "status": "scheduled",
+      "status": "completed",
       "notes": "First follow-up on lower back stiffness and digestive bloating. Needles applied on BL-23, GV-4, ST-36.",
       "createdAt": "2026-08-29T14:20:00.000Z"
     },
@@ -90,8 +142,17 @@
       "date": "2026-08-31",
       "time": "19:00",
       "status": "scheduled",
-      "notes": "Severe migraine headaches and stress",
+      "notes": "reduced back pain",
       "createdAt": "2026-08-30T17:37:51.874Z"
+    },
+    {
+      "id": "A-5004",
+      "patientId": "P-1004",
+      "date": "2026-09-21",
+      "time": "18:30",
+      "status": "scheduled",
+      "notes": "Synus",
+      "createdAt": "2026-09-19T17:12:56.753Z"
     }
   ],
   "settings": {
