@@ -1,354 +1,312 @@
+const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
 
-const DB_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DB_DIR, 'database.json');
+const Patient = require('./models/Patient');
+const Appointment = require('./models/Appointment');
+const Settings = require('./models/Settings');
 
-// Default database structure with seed data
-const defaultData = {
-  patients: [
-    {
-      id: "P-1001",
-      name: "Ramesh Kumar",
-      phone: "9876543210",
-      email: "ramesh@example.com",
-      age: 45,
-      gender: "Male",
-      createdAt: "2026-08-25T10:00:00.000Z",
-      dietPlan: {
-        avoid: [
-          "Ice cold water and cold carbonated drinks",
-          "Deep-fried, heavy oils, and refined sugar",
-          "Excess raw foods (salads/cold fruits) after sunset"
-        ],
-        recommend: [
-          "Warm water infused with sliced ginger and cumin",
-          "Steamed green leafy vegetables with minimal spices",
-          "Millet-based warm porridge for breakfast"
-        ],
-        habits: "Walk for 15 minutes after dinner. Ensure sleeping by 10:30 PM to support liver meridian recovery.",
-        acupressurePoints: "Press ST-36 (Zusanli) for 2 minutes daily to improve digestion. Press LI-4 (Hegu) for headaches or stress relief.",
-        updatedAt: "2026-08-29T19:00:00.000Z"
-      },
-      clinicalRecord: {
-        bp: "120/80 mmHg",
-        temperature: "98.6 °F",
-        pulseRate: "72 bpm",
-        bodyType: "Vata-Pitta",
-        tongueDescription: "Reddish tip with thin white coating",
-        tongueImage: "",
-        updatedAt: "2026-08-29T19:00:00.000Z"
-      }
-    },
-    {
-      id: "P-1002",
-      name: "Anjali Rao",
-      phone: "9123456789",
-      email: "anjali@example.com",
-      age: 34,
-      gender: "Female",
-      createdAt: "2026-08-27T11:30:00.000Z",
-      dietPlan: {
-        avoid: [
-          "Processed dairy and cheese products",
-          "Spicy pickles and fermented foods",
-          "Caffeinated beverages after 3:00 PM"
-        ],
-        recommend: [
-          "Warm chamomile and mint tea",
-          "Cooked rice, lentils (dal), and bottle gourd curry",
-          "Soaked almonds and walnuts in the morning"
-        ],
-        habits: "Practice deep breathing (Pranayama) for 10 minutes in the morning. Keep mobile phone away 1 hour before sleep.",
-        acupressurePoints: "Press SP-6 (Sanyinjiao) for hormone balance and calming the mind (avoid deep pressure if pregnant). Press PC-6 (Neiguan) for anxiety.",
-        updatedAt: "2026-08-29T19:15:00.000Z"
-      },
-      clinicalRecord: {
-        bp: "118/76 mmHg",
-        temperature: "98.4 °F",
-        pulseRate: "76 bpm",
-        bodyType: "Pitta-Kapha",
-        tongueDescription: "Pale tongue body with yellowish center coating",
-        tongueImage: "",
-        updatedAt: "2026-08-29T19:15:00.000Z"
-      }
-    }
-  ],
-  appointments: [
-    {
-      id: "A-5001",
-      patientId: "P-1001",
-      date: "2026-08-31", // tomorrow
-      time: "18:30",
-      status: "scheduled",
-      notes: "First follow-up on lower back stiffness and digestive bloating. Needles applied on BL-23, GV-4, ST-36.",
-      createdAt: "2026-08-29T14:20:00.000Z"
-    },
-    {
-      id: "A-5002",
-      patientId: "P-1002",
-      date: "2026-08-31", // tomorrow
-      time: "19:30",
-      status: "scheduled",
-      notes: "Managing stress and migraine headaches. Points targeted: GB-20, LI-4, LV-3.",
-      createdAt: "2026-08-29T15:10:00.000Z"
-    }
-  ],
-  settings: {
-    doctorPassword: "doctor123",
-    // Time slots available per weekday (Monday - Friday)
-    // 6:30 PM to 8:30 PM
-    standardSlots: ["18:30", "19:00", "19:30", "20:00"],
-    blockedDays: [], // list of YYYY-MM-DD
-    blockedSlots: {} // mapping of YYYY-MM-DD -> list of blocked times (e.g. {"2026-09-01": ["19:00"]})
+const SEED_FILE = path.join(__dirname, 'data', 'database.json');
+
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri || uri.includes('username:password')) {
+    console.warn('\n=============================================================');
+    console.warn('⚠️  MONGODB_URI contains placeholder credentials in .env!');
+    console.warn('   Please update .env with your MongoDB Atlas connection URI.');
+    console.warn('   Attempting local fallback at mongodb://127.0.0.1:27017/moms_passion...');
+    console.warn('=============================================================\n');
   }
-};
 
-function initDB() {
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2), 'utf8');
-    console.log("Database initialized with seed data.");
+  const connectUri = (uri && !uri.includes('username:password')) 
+    ? uri 
+    : 'mongodb://127.0.0.1:27017/moms_passion';
+
+  try {
+    await mongoose.connect(connectUri);
+    isConnected = true;
+    console.log(`✅ Connected to MongoDB at: ${connectUri.split('@').pop() || connectUri}`);
+    await initDB();
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err.message);
   }
 }
 
-// Read database from file
-function readDB() {
-  initDB();
+// Seed initial data if DB is empty
+async function initDB() {
   try {
-    const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Error reading database file, returning default structure:", err);
-    return defaultData;
-  }
-}
+    const patientCount = await Patient.countDocuments();
+    if (patientCount === 0 && fs.existsSync(SEED_FILE)) {
+      console.log('🌱 Seeding initial data from database.json into MongoDB...');
+      const seedRaw = fs.readFileSync(SEED_FILE, 'utf8');
+      const seedData = JSON.parse(seedRaw);
 
-// Write database to file
-function writeDB(data) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-    return true;
+      if (seedData.patients && seedData.patients.length > 0) {
+        await Patient.insertMany(seedData.patients);
+        console.log(`   Seeded ${seedData.patients.length} patients.`);
+      }
+
+      if (seedData.appointments && seedData.appointments.length > 0) {
+        await Appointment.insertMany(seedData.appointments);
+        console.log(`   Seeded ${seedData.appointments.length} appointments.`);
+      }
+
+      if (seedData.settings) {
+        await Settings.create(seedData.settings);
+        console.log('   Seeded settings.');
+      }
+    } else {
+      // Ensure default settings document exists
+      const settingsCount = await Settings.countDocuments();
+      if (settingsCount === 0) {
+        await Settings.create({});
+      }
+    }
   } catch (err) {
-    console.error("Error writing database file:", err);
-    return false;
+    console.error('Error seeding initial data into MongoDB:', err.message);
   }
 }
 
 const db = {
+  connectDB,
+
   // --- PATIENTS ---
-  getPatients: () => {
-    return readDB().patients;
+  getPatients: async () => {
+    return await Patient.find({}).lean();
   },
 
-  getPatientById: (id) => {
-    return readDB().patients.find(p => p.id === id) || null;
+  getPatientById: async (id) => {
+    return await Patient.findOne({ id }).lean();
   },
 
-  getPatientByPhone: (phone) => {
+  getPatientByPhone: async (phone) => {
     const sanitized = phone.replace(/[^0-9]/g, '');
-    return readDB().patients.find(p => p.phone.replace(/[^0-9]/g, '') === sanitized) || null;
+    const patients = await Patient.find({}).lean();
+    return patients.find(p => p.phone && p.phone.replace(/[^0-9]/g, '') === sanitized) || null;
   },
 
-  createPatient: (patientData) => {
-    const data = readDB();
-    // Generate new patient ID
-    const maxId = data.patients.reduce((max, p) => {
-      const idNum = parseInt(p.id.split('-')[1]);
+  createPatient: async (patientData) => {
+    const patients = await Patient.find({}).lean();
+    const maxId = patients.reduce((max, p) => {
+      const idNum = parseInt(p.id ? p.id.split('-')[1] : 0, 10);
       return idNum > max ? idNum : max;
     }, 1000);
     const newId = `P-${maxId + 1}`;
 
-    const newPatient = {
+    const newPatient = new Patient({
       id: newId,
       name: patientData.name,
       phone: patientData.phone,
-      email: patientData.email || "",
-      age: patientData.age ? parseInt(patientData.age) : null,
-      gender: patientData.gender || "",
-      createdAt: new Date().toISOString(),
+      email: patientData.email || '',
+      age: patientData.age ? parseInt(patientData.age, 10) : null,
+      gender: patientData.gender || '',
+      createdAt: new Date(),
       dietPlan: {
         avoid: [],
         recommend: [],
-        habits: "",
-        acupressurePoints: "",
-        updatedAt: new Date().toISOString()
+        habits: '',
+        acupressurePoints: '',
+        updatedAt: new Date()
       },
       clinicalRecord: {
-        bp: "",
-        temperature: "",
-        pulseRate: "",
-        bodyType: "",
-        tongueDescription: "",
-        tongueImage: "",
-        updatedAt: new Date().toISOString()
+        bp: '',
+        temperature: '',
+        pulseRate: '',
+        bodyType: '',
+        tongueDescription: '',
+        tongueImage: '',
+        updatedAt: new Date()
       }
-    };
+    });
 
-    data.patients.push(newPatient);
-    writeDB(data);
-    return newPatient;
+    await newPatient.save();
+    return newPatient.toObject();
   },
 
-  updatePatientDiet: (id, dietData) => {
-    const data = readDB();
-    const patientIndex = data.patients.findIndex(p => p.id === id);
-    if (patientIndex === -1) return null;
+  updatePatientDiet: async (id, dietData) => {
+    const patient = await Patient.findOne({ id });
+    if (!patient) return null;
 
-    data.patients[patientIndex].dietPlan = {
-      avoid: Array.isArray(dietData.avoid) ? dietData.avoid : [dietData.avoid || ""],
-      recommend: Array.isArray(dietData.recommend) ? dietData.recommend : [dietData.recommend || ""],
-      habits: dietData.habits || "",
-      acupressurePoints: dietData.acupressurePoints || "",
-      updatedAt: new Date().toISOString()
+    patient.dietPlan = {
+      avoid: Array.isArray(dietData.avoid) ? dietData.avoid : [dietData.avoid || ''],
+      recommend: Array.isArray(dietData.recommend) ? dietData.recommend : [dietData.recommend || ''],
+      habits: dietData.habits || '',
+      acupressurePoints: dietData.acupressurePoints || '',
+      updatedAt: new Date()
     };
 
-    writeDB(data);
-    return data.patients[patientIndex];
+    await patient.save();
+    return patient.toObject();
   },
 
-  updatePatientClinical: (id, clinicalData) => {
-    const data = readDB();
-    const patientIndex = data.patients.findIndex(p => p.id === id);
-    if (patientIndex === -1) return null;
+  updatePatientClinical: async (id, clinicalData) => {
+    const patient = await Patient.findOne({ id });
+    if (!patient) return null;
 
-    data.patients[patientIndex].clinicalRecord = {
-      bp: clinicalData.bp || "",
-      temperature: clinicalData.temperature || "",
-      pulseRate: clinicalData.pulseRate || "",
-      bodyType: clinicalData.bodyType || "",
-      tongueDescription: clinicalData.tongueDescription || "",
-      tongueImage: clinicalData.tongueImage !== undefined ? clinicalData.tongueImage : (data.patients[patientIndex].clinicalRecord ? data.patients[patientIndex].clinicalRecord.tongueImage : ""),
-      updatedAt: new Date().toISOString()
+    const currentImage = patient.clinicalRecord ? patient.clinicalRecord.tongueImage : '';
+
+    patient.clinicalRecord = {
+      bp: clinicalData.bp || '',
+      temperature: clinicalData.temperature || '',
+      pulseRate: clinicalData.pulseRate || '',
+      bodyType: clinicalData.bodyType || '',
+      tongueDescription: clinicalData.tongueDescription || '',
+      tongueImage: clinicalData.tongueImage !== undefined ? clinicalData.tongueImage : currentImage,
+      updatedAt: new Date()
     };
 
-    writeDB(data);
-    return data.patients[patientIndex];
+    await patient.save();
+    return patient.toObject();
   },
 
   // --- APPOINTMENTS ---
-  getAppointments: () => {
-    return readDB().appointments;
+  getAppointments: async () => {
+    return await Appointment.find({}).lean();
   },
 
-  getAppointmentById: (id) => {
-    return readDB().appointments.find(a => a.id === id) || null;
+  getAppointmentById: async (id) => {
+    return await Appointment.findOne({ id }).lean();
   },
 
-  createAppointment: (apptData) => {
-    const data = readDB();
-    // Generate new Appt ID
-    const maxId = data.appointments.reduce((max, a) => {
-      const idNum = parseInt(a.id.split('-')[1]);
+  createAppointment: async (apptData) => {
+    const isBooked = await Appointment.findOne({
+      date: apptData.date,
+      time: apptData.time,
+      status: 'scheduled'
+    });
+
+    if (isBooked) {
+      throw new Error('This time slot has already been booked.');
+    }
+
+    const appointments = await Appointment.find({}).lean();
+    const maxId = appointments.reduce((max, a) => {
+      const idNum = parseInt(a.id ? a.id.split('-')[1] : 0, 10);
       return idNum > max ? idNum : max;
     }, 5000);
     const newId = `A-${maxId + 1}`;
 
-    const newAppt = {
+    const newAppt = new Appointment({
       id: newId,
       patientId: apptData.patientId,
-      date: apptData.date, // YYYY-MM-DD
-      time: apptData.time, // HH:MM
-      status: "scheduled",
-      notes: apptData.notes || "",
-      createdAt: new Date().toISOString()
-    };
+      date: apptData.date,
+      time: apptData.time,
+      status: 'scheduled',
+      notes: apptData.notes || '',
+      createdAt: new Date()
+    });
 
-    // Check if slot is already booked
-    const isBooked = data.appointments.some(a => 
-      a.date === apptData.date && 
-      a.time === apptData.time && 
-      a.status === "scheduled"
-    );
-
-    if (isBooked) {
-      throw new Error("This time slot has already been booked.");
-    }
-
-    data.appointments.push(newAppt);
-    writeDB(data);
-    return newAppt;
+    await newAppt.save();
+    return newAppt.toObject();
   },
 
-  updateAppointmentStatus: (id, status, notes) => {
-    const data = readDB();
-    const index = data.appointments.findIndex(a => a.id === id);
-    if (index === -1) return null;
+  updateAppointmentStatus: async (id, status, notes) => {
+    const appt = await Appointment.findOne({ id });
+    if (!appt) return null;
 
-    data.appointments[index].status = status;
+    appt.status = status;
     if (notes !== undefined) {
-      data.appointments[index].notes = notes;
+      appt.notes = notes;
     }
-    
-    writeDB(data);
-    return data.appointments[index];
+
+    await appt.save();
+    return appt.toObject();
   },
 
   // --- SETTINGS AND SLOTS ---
-  getSettings: () => {
-    return readDB().settings;
+  getSettings: async () => {
+    let settings = await Settings.findOne({}).lean();
+    if (!settings) {
+      const created = await Settings.create({});
+      settings = created.toObject();
+    }
+    // Normalize blockedSlots Map to standard JS object
+    if (settings.blockedSlots instanceof Map) {
+      settings.blockedSlots = Object.fromEntries(settings.blockedSlots);
+    }
+    return settings;
   },
 
-  verifyPassword: (password) => {
-    return readDB().settings.doctorPassword === password;
+  verifyPassword: async (password) => {
+    const settings = await db.getSettings();
+    return settings.doctorPassword === password;
   },
 
-  updatePassword: (newPassword) => {
-    const data = readDB();
-    data.settings.doctorPassword = newPassword;
-    writeDB(data);
+  updatePassword: async (newPassword) => {
+    let settings = await Settings.findOne({});
+    if (!settings) {
+      settings = new Settings();
+    }
+    settings.doctorPassword = newPassword;
+    await settings.save();
     return true;
   },
 
-  getBlockedSlots: (date) => {
-    const settings = readDB().settings;
-    return settings.blockedSlots[date] || [];
+  getBlockedSlots: async (date) => {
+    const settings = await db.getSettings();
+    return (settings.blockedSlots && settings.blockedSlots[date]) ? settings.blockedSlots[date] : [];
   },
 
-  blockSlot: (date, time) => {
-    const data = readDB();
-    if (!data.settings.blockedSlots[date]) {
-      data.settings.blockedSlots[date] = [];
-    }
-    if (!data.settings.blockedSlots[date].includes(time)) {
-      data.settings.blockedSlots[date].push(time);
-    }
-    writeDB(data);
-    return true;
-  },
+  blockSlot: async (date, time) => {
+    let settings = await Settings.findOne({});
+    if (!settings) settings = new Settings();
 
-  unblockSlot: (date, time) => {
-    const data = readDB();
-    if (data.settings.blockedSlots[date]) {
-      data.settings.blockedSlots[date] = data.settings.blockedSlots[date].filter(t => t !== time);
-      if (data.settings.blockedSlots[date].length === 0) {
-        delete data.settings.blockedSlots[date];
-      }
-      writeDB(data);
+    if (!settings.blockedSlots) {
+      settings.blockedSlots = new Map();
     }
-    return true;
-  },
 
-  blockDay: (date) => {
-    const data = readDB();
-    if (!data.settings.blockedDays.includes(date)) {
-      data.settings.blockedDays.push(date);
-      writeDB(data);
+    const current = settings.blockedSlots.get(date) || [];
+    if (!current.includes(time)) {
+      current.push(time);
+      settings.blockedSlots.set(date, current);
+      settings.markModified('blockedSlots');
+      await settings.save();
     }
     return true;
   },
 
-  unblockDay: (date) => {
-    const data = readDB();
-    data.settings.blockedDays = data.settings.blockedDays.filter(d => d !== date);
-    writeDB(data);
+  unblockSlot: async (date, time) => {
+    let settings = await Settings.findOne({});
+    if (!settings || !settings.blockedSlots) return true;
+
+    const current = settings.blockedSlots.get(date) || [];
+    const updated = current.filter(t => t !== time);
+
+    if (updated.length === 0) {
+      settings.blockedSlots.delete(date);
+    } else {
+      settings.blockedSlots.set(date, updated);
+    }
+    settings.markModified('blockedSlots');
+    await settings.save();
+    return true;
+  },
+
+  blockDay: async (date) => {
+    let settings = await Settings.findOne({});
+    if (!settings) settings = new Settings();
+
+    if (!settings.blockedDays.includes(date)) {
+      settings.blockedDays.push(date);
+      await settings.save();
+    }
+    return true;
+  },
+
+  unblockDay: async (date) => {
+    let settings = await Settings.findOne({});
+    if (!settings) return true;
+
+    settings.blockedDays = settings.blockedDays.filter(d => d !== date);
+    await settings.save();
     return true;
   }
 };
-
-// Initialize DB file immediately
-initDB();
 
 module.exports = db;

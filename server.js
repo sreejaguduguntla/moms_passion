@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const db = require('./db');
@@ -12,22 +13,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // --- API ENDPOINTS ---
 
 // 1. Get Slot Availability
-app.get('/api/availability', (req, res) => {
+app.get('/api/availability', async (req, res) => {
   const { date } = req.query; // Expects YYYY-MM-DD
   if (!date) {
     return res.status(400).json({ error: "Date parameter is required (YYYY-MM-DD)" });
   }
 
   try {
-    const settings = db.getSettings();
-    const appointments = db.getAppointments();
+    const settings = await db.getSettings();
+    const appointments = await db.getAppointments();
 
     // Parse date to check day of week
     const dateObj = new Date(date);
     const dayOfWeek = dateObj.getDay(); // 0 = Sunday, 6 = Saturday
 
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const isDayBlocked = settings.blockedDays.includes(date);
+    const isDayBlocked = settings.blockedDays && settings.blockedDays.includes(date);
 
     // If day is blocked or is a weekend, no slots are available
     if (isDayBlocked || isWeekend) {
@@ -39,8 +40,9 @@ app.get('/api/availability', (req, res) => {
       });
     }
 
-    const standardSlots = settings.standardSlots;
-    const manuallyBlocked = settings.blockedSlots[date] || [];
+    const standardSlots = settings.standardSlots || ["18:30", "19:00", "19:30", "20:00"];
+    const blockedSlotsMap = settings.blockedSlots || {};
+    const manuallyBlocked = blockedSlotsMap[date] || [];
 
     // Get active bookings for this date
     const bookedTimes = appointments
@@ -71,7 +73,7 @@ app.get('/api/availability', (req, res) => {
 });
 
 // 2. Book Appointment (Patient)
-app.post('/api/appointments', (req, res) => {
+app.post('/api/appointments', async (req, res) => {
   const { name, phone, email, age, gender, date, time, notes } = req.body;
 
   if (!name || !phone || !date || !time) {
@@ -80,13 +82,13 @@ app.post('/api/appointments', (req, res) => {
 
   try {
     // 1. Find or create patient
-    let patient = db.getPatientByPhone(phone);
+    let patient = await db.getPatientByPhone(phone);
     if (!patient) {
-      patient = db.createPatient({ name, phone, email, age, gender });
+      patient = await db.createPatient({ name, phone, email, age, gender });
     }
 
     // 2. Book appointment
-    const appointment = db.createAppointment({
+    const appointment = await db.createAppointment({
       patientId: patient.id,
       date,
       time,
@@ -107,20 +109,21 @@ app.post('/api/appointments', (req, res) => {
 });
 
 // 3. Patient Lookup (Lookup history & diet chart)
-app.post('/api/patient/lookup', (req, res) => {
+app.post('/api/patient/lookup', async (req, res) => {
   const { phone } = req.body;
   if (!phone) {
     return res.status(400).json({ error: "Phone number is required." });
   }
 
   try {
-    const patient = db.getPatientByPhone(phone);
+    const patient = await db.getPatientByPhone(phone);
     if (!patient) {
       return res.status(404).json({ error: "No records found for this phone number." });
     }
 
     // Get all appointments for this patient
-    const appointments = db.getAppointments()
+    const allAppointments = await db.getAppointments();
+    const appointments = allAppointments
       .filter(a => a.patientId === patient.id)
       .sort((a, b) => {
         // Sort by date desc, then time desc
@@ -141,13 +144,13 @@ app.post('/api/patient/lookup', (req, res) => {
 });
 
 // 4. Doctor Login
-app.post('/api/doctor/login', (req, res) => {
+app.post('/api/doctor/login', async (req, res) => {
   const { password } = req.body;
   if (!password) {
     return res.status(400).json({ error: "Password is required." });
   }
 
-  const isValid = db.verifyPassword(password);
+  const isValid = await db.verifyPassword(password);
   if (isValid) {
     res.json({ success: true });
   } else {
@@ -156,10 +159,10 @@ app.post('/api/doctor/login', (req, res) => {
 });
 
 // 5. Doctor: Get All Appointments (with patient details joined)
-app.get('/api/doctor/appointments', (req, res) => {
+app.get('/api/doctor/appointments', async (req, res) => {
   try {
-    const appts = db.getAppointments();
-    const patients = db.getPatients();
+    const appts = await db.getAppointments();
+    const patients = await db.getPatients();
 
     // Map patient details into appointments
     const joined = appts.map(appt => {
@@ -185,7 +188,7 @@ app.get('/api/doctor/appointments', (req, res) => {
 });
 
 // 6. Doctor: Update Appointment Status/Notes
-app.post('/api/doctor/appointments/:id/status', (req, res) => {
+app.post('/api/doctor/appointments/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status, notes } = req.body;
 
@@ -194,7 +197,7 @@ app.post('/api/doctor/appointments/:id/status', (req, res) => {
   }
 
   try {
-    const updated = db.updateAppointmentStatus(id, status, notes);
+    const updated = await db.updateAppointmentStatus(id, status, notes);
     if (!updated) {
       return res.status(404).json({ error: "Appointment not found." });
     }
@@ -206,9 +209,9 @@ app.post('/api/doctor/appointments/:id/status', (req, res) => {
 });
 
 // 7. Doctor: Get All Patients
-app.get('/api/doctor/patients', (req, res) => {
+app.get('/api/doctor/patients', async (req, res) => {
   try {
-    const patients = db.getPatients();
+    const patients = await db.getPatients();
     res.json(patients);
   } catch (err) {
     console.error("Error fetching doctor patients:", err);
@@ -217,12 +220,12 @@ app.get('/api/doctor/patients', (req, res) => {
 });
 
 // 8. Doctor: Update Patient Diet Plan
-app.post('/api/doctor/patients/:id/diet', (req, res) => {
+app.post('/api/doctor/patients/:id/diet', async (req, res) => {
   const { id } = req.params;
   const { avoid, recommend, habits, acupressurePoints } = req.body;
 
   try {
-    const updatedPatient = db.updatePatientDiet(id, {
+    const updatedPatient = await db.updatePatientDiet(id, {
       avoid: avoid || [],
       recommend: recommend || [],
       habits: habits || "",
@@ -241,12 +244,12 @@ app.post('/api/doctor/patients/:id/diet', (req, res) => {
 });
 
 // 8b. Doctor: Update Patient Clinical Vitals & Record
-app.post('/api/doctor/patients/:id/clinical', (req, res) => {
+app.post('/api/doctor/patients/:id/clinical', async (req, res) => {
   const { id } = req.params;
   const { bp, temperature, pulseRate, bodyType, tongueDescription, tongueImage } = req.body;
 
   try {
-    const updatedPatient = db.updatePatientClinical(id, {
+    const updatedPatient = await db.updatePatientClinical(id, {
       bp: bp || "",
       temperature: temperature || "",
       pulseRate: pulseRate || "",
@@ -267,9 +270,9 @@ app.post('/api/doctor/patients/:id/clinical', (req, res) => {
 });
 
 // 9. Doctor: Get Settings & Custom Slot Rules
-app.get('/api/doctor/settings', (req, res) => {
+app.get('/api/doctor/settings', async (req, res) => {
   try {
-    const settings = db.getSettings();
+    const settings = await db.getSettings();
     res.json(settings);
   } catch (err) {
     console.error("Error getting settings:", err);
@@ -278,13 +281,13 @@ app.get('/api/doctor/settings', (req, res) => {
 });
 
 // 10. Doctor: Block Specific Slot
-app.post('/api/doctor/slots/block', (req, res) => {
+app.post('/api/doctor/slots/block', async (req, res) => {
   const { date, time } = req.body;
   if (!date || !time) {
     return res.status(400).json({ error: "Date and time slot are required." });
   }
   try {
-    db.blockSlot(date, time);
+    await db.blockSlot(date, time);
     res.json({ success: true });
   } catch (err) {
     console.error("Error blocking slot:", err);
@@ -293,13 +296,13 @@ app.post('/api/doctor/slots/block', (req, res) => {
 });
 
 // 11. Doctor: Unblock Specific Slot
-app.post('/api/doctor/slots/unblock', (req, res) => {
+app.post('/api/doctor/slots/unblock', async (req, res) => {
   const { date, time } = req.body;
   if (!date || !time) {
     return res.status(400).json({ error: "Date and time slot are required." });
   }
   try {
-    db.unblockSlot(date, time);
+    await db.unblockSlot(date, time);
     res.json({ success: true });
   } catch (err) {
     console.error("Error unblocking slot:", err);
@@ -308,13 +311,13 @@ app.post('/api/doctor/slots/unblock', (req, res) => {
 });
 
 // 12. Doctor: Block Entire Day
-app.post('/api/doctor/slots/block-day', (req, res) => {
+app.post('/api/doctor/slots/block-day', async (req, res) => {
   const { date } = req.body;
   if (!date) {
     return res.status(400).json({ error: "Date is required." });
   }
   try {
-    db.blockDay(date);
+    await db.blockDay(date);
     res.json({ success: true });
   } catch (err) {
     console.error("Error blocking day:", err);
@@ -323,13 +326,13 @@ app.post('/api/doctor/slots/block-day', (req, res) => {
 });
 
 // 13. Doctor: Unblock Entire Day
-app.post('/api/doctor/slots/unblock-day', (req, res) => {
+app.post('/api/doctor/slots/unblock-day', async (req, res) => {
   const { date } = req.body;
   if (!date) {
     return res.status(400).json({ error: "Date is required." });
   }
   try {
-    db.unblockDay(date);
+    await db.unblockDay(date);
     res.json({ success: true });
   } catch (err) {
     console.error("Error unblocking day:", err);
@@ -342,10 +345,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(` SAI RAM ACUPUNCTURE & ACUPRESSURE CLINIC SERVER`);
-  console.log(` Running on: http://localhost:${PORT}`);
-  console.log(`====================================================`);
-});
+// Start Server and Connect Database
+async function startServer() {
+  await db.connectDB();
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(` SAI RAM ACUPUNCTURE & ACUPRESSURE CLINIC SERVER`);
+    console.log(` Running on: http://localhost:${PORT}`);
+    console.log(`====================================================`);
+  });
+}
+
+startServer();
