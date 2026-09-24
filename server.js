@@ -246,7 +246,12 @@ app.post('/api/doctor/patients/:id/diet', async (req, res) => {
 // 8b. Doctor: Update Patient Clinical Vitals & Record
 app.post('/api/doctor/patients/:id/clinical', async (req, res) => {
   const { id } = req.params;
-  const { bp, temperature, pulseRate, bodyType, tongueDescription, tongueImage } = req.body;
+  const { 
+    bp, temperature, pulseRate, bodyType, 
+    urineColor, urineUrgency, urineFoaming, urineFrequency, urinePain, 
+    bowelMovement, 
+    tongueDescription, tongueImage 
+  } = req.body;
 
   try {
     const updatedPatient = await db.updatePatientClinical(id, {
@@ -254,6 +259,12 @@ app.post('/api/doctor/patients/:id/clinical', async (req, res) => {
       temperature: temperature || "",
       pulseRate: pulseRate || "",
       bodyType: bodyType || "",
+      urineColor: urineColor || "",
+      urineUrgency: urineUrgency || "",
+      urineFoaming: urineFoaming || "",
+      urineFrequency: urineFrequency || "",
+      urinePain: urinePain || "",
+      bowelMovement: bowelMovement || "",
       tongueDescription: tongueDescription || "",
       tongueImage: tongueImage
     });

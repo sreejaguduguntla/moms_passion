@@ -167,6 +167,8 @@ function renderAppointmentsTable() {
       if (clinical.bp) parts.push(`BP: ${clinical.bp}`);
       if (clinical.temperature) parts.push(`Temp: ${clinical.temperature}`);
       if (clinical.pulseRate) parts.push(`Pulse: ${clinical.pulseRate}`);
+      if (clinical.bowelMovement) parts.push(`Bowel: ${clinical.bowelMovement}`);
+      if (clinical.urineColor || clinical.urineUrgency || clinical.urineFoaming || clinical.urineFrequency || clinical.urinePain) parts.push(`Urine Exam Recorded`);
       if (clinical.bodyType) parts.push(`Dosha: ${clinical.bodyType}`);
       if (parts.length > 0) {
         vitalsSummaryHtml = `<div style="font-size: 11px; margin-top: 4px; color: #15803d; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0;">${parts.join(' | ')}</div>`;
@@ -238,6 +240,10 @@ function renderPatientsTable(list) {
     if (clinical.bp) vitalsBadges.push(`<span class="badge" style="background:#e0f2fe; color:#0369a1; font-weight:600;">BP: ${clinical.bp}</span>`);
     if (clinical.temperature) vitalsBadges.push(`<span class="badge" style="background:#fef3c7; color:#92400e; font-weight:600;">Temp: ${clinical.temperature}</span>`);
     if (clinical.pulseRate) vitalsBadges.push(`<span class="badge" style="background:#fce7f3; color:#9d174d; font-weight:600;">Pulse: ${clinical.pulseRate}</span>`);
+    if (clinical.bowelMovement) vitalsBadges.push(`<span class="badge" style="background:#fefce8; color:#854d0e; font-weight:600; border:1px solid #fef08a;">💩 Bowel: ${clinical.bowelMovement}</span>`);
+    if (clinical.urineColor || clinical.urineUrgency || clinical.urineFoaming || clinical.urineFrequency || clinical.urinePain) {
+      vitalsBadges.push(`<span class="badge" style="background:#f0f9ff; color:#0369a1; font-weight:600; border:1px solid #bae6fd;">🚽 Urine Analysis</span>`);
+    }
     if (clinical.bodyType) vitalsBadges.push(`<span class="badge" style="background:#dcfce7; color:#15803d; font-weight:600;">Body: ${clinical.bodyType}</span>`);
     if (clinical.tongueImage || clinical.tongueDescription) vitalsBadges.push(`<span class="badge" style="background:#f3e8ff; color:#6b21a8; font-weight:600;">👅 Tongue Exam</span>`);
 
@@ -280,6 +286,24 @@ function filterPatients() {
   renderPatientsTable(filtered);
 }
 
+// Helper to select dropdown value or match legacy custom string
+function setSelectOrCustom(selectId, value) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+  select.value = value || '';
+  if (value && select.selectedIndex <= 0) {
+    for (let i = 0; i < select.options.length; i++) {
+      if (select.options[i].value.toLowerCase().includes(value.toLowerCase()) || value.toLowerCase().includes(select.options[i].value.toLowerCase())) {
+        select.selectedIndex = i;
+        return;
+      }
+    }
+    const opt = new Option(value, value);
+    select.add(opt);
+    select.value = value;
+  }
+}
+
 // --- CLINICAL VITALS MODAL DIALOG ---
 function openVitalsModal(patientId) {
   const patient = allPatients.find(p => p.id === patientId);
@@ -290,9 +314,16 @@ function openVitalsModal(patientId) {
 
   const clinical = patient.clinicalRecord || {};
 
-  document.getElementById('vitalsBpInput').value = clinical.bp || '';
-  document.getElementById('vitalsTempInput').value = clinical.temperature || '';
-  document.getElementById('vitalsPulseInput').value = clinical.pulseRate || '';
+  setSelectOrCustom('vitalsBpSelect', clinical.bp);
+  setSelectOrCustom('vitalsTempSelect', clinical.temperature);
+  setSelectOrCustom('vitalsPulseSelect', clinical.pulseRate);
+  setSelectOrCustom('vitalsUrineColorSelect', clinical.urineColor);
+  setSelectOrCustom('vitalsUrineUrgencySelect', clinical.urineUrgency);
+  setSelectOrCustom('vitalsUrineFoamingSelect', clinical.urineFoaming);
+  setSelectOrCustom('vitalsUrineFreqSelect', clinical.urineFrequency);
+  setSelectOrCustom('vitalsUrinePainSelect', clinical.urinePain);
+  setSelectOrCustom('vitalsBowelMovementSelect', clinical.bowelMovement);
+
   document.getElementById('vitalsBodyTypeSelect').value = clinical.bodyType || '';
   document.getElementById('vitalsTongueDescInput').value = clinical.tongueDescription || '';
   document.getElementById('vitalsTongueImageBase64').value = clinical.tongueImage || '';
@@ -343,14 +374,25 @@ function clearTongueImage() {
 
 async function savePatientClinicalRecord() {
   const patientId = document.getElementById('vitalsPatientId').value;
-  const bp = document.getElementById('vitalsBpInput').value.trim();
-  const temperature = document.getElementById('vitalsTempInput').value.trim();
-  const pulseRate = document.getElementById('vitalsPulseInput').value.trim();
+  const bp = document.getElementById('vitalsBpSelect').value;
+  const temperature = document.getElementById('vitalsTempSelect').value;
+  const pulseRate = document.getElementById('vitalsPulseSelect').value;
+  const urineColor = document.getElementById('vitalsUrineColorSelect').value;
+  const urineUrgency = document.getElementById('vitalsUrineUrgencySelect').value;
+  const urineFoaming = document.getElementById('vitalsUrineFoamingSelect').value;
+  const urineFrequency = document.getElementById('vitalsUrineFreqSelect').value;
+  const urinePain = document.getElementById('vitalsUrinePainSelect').value;
+  const bowelMovement = document.getElementById('vitalsBowelMovementSelect').value;
   const bodyType = document.getElementById('vitalsBodyTypeSelect').value;
   const tongueDescription = document.getElementById('vitalsTongueDescInput').value.trim();
   const tongueImage = document.getElementById('vitalsTongueImageBase64').value;
 
-  const payload = { bp, temperature, pulseRate, bodyType, tongueDescription, tongueImage };
+  const payload = {
+    bp, temperature, pulseRate, bodyType,
+    urineColor, urineUrgency, urineFoaming, urineFrequency, urinePain,
+    bowelMovement,
+    tongueDescription, tongueImage
+  };
 
   try {
     const res = await fetch(`/api/doctor/patients/${patientId}/clinical`, {

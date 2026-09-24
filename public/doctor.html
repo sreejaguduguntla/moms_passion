@@ -258,24 +258,136 @@
         
         <div style="background-color: var(--color-primary-light); padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
           <h4 style="margin-bottom: 4px; font-size: 15px; color: var(--color-primary-dark);">Vital Signs & Physical Examination</h4>
-          <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">Record patient vitals, Ayurvedic body type (Dosha), and tongue examination details.</p>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">Record patient vitals, urine analysis, bowel patterns, Ayurvedic body type (Dosha), and tongue examination.</p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px;" class="mb-3">
           <div class="form-group">
-            <label for="vitalsBpInput">❤️ BP (Blood Pressure)</label>
-            <input type="text" id="vitalsBpInput" class="form-control" placeholder="e.g. 120/80 mmHg">
+            <label for="vitalsBpSelect">❤️ BP (Blood Pressure)</label>
+            <select id="vitalsBpSelect" class="form-control">
+              <option value="">-- Select BP --</option>
+              <option value="120/80 mmHg (Normal)">120/80 mmHg (Normal)</option>
+              <option value="110/70 mmHg (Optimal)">110/70 mmHg (Optimal)</option>
+              <option value="100/60 mmHg (Low Normal)">100/60 mmHg (Low Normal)</option>
+              <option value="<90/60 mmHg (Low BP / Hypotension)">&lt;90/60 mmHg (Low BP / Hypotension)</option>
+              <option value="130/85 mmHg (Pre-Hypertension)">130/85 mmHg (Pre-Hypertension)</option>
+              <option value="140/90 mmHg (Stage 1 High BP)">140/90 mmHg (Stage 1 High BP)</option>
+              <option value="160/100 mmHg (Stage 2 High BP)">160/100 mmHg (Stage 2 High BP)</option>
+              <option value=">180/120 mmHg (Hypertensive Crisis)">&gt;180/120 mmHg (Hypertensive Crisis)</option>
+            </select>
           </div>
           
           <div class="form-group">
-            <label for="vitalsTempInput">🌡️ Temperature</label>
-            <input type="text" id="vitalsTempInput" class="form-control" placeholder="e.g. 98.6 °F">
+            <label for="vitalsTempSelect">🌡️ Temperature</label>
+            <select id="vitalsTempSelect" class="form-control">
+              <option value="">-- Select Temperature --</option>
+              <option value="98.6 °F (Normal)">98.6 °F (Normal)</option>
+              <option value="98.0 °F - 98.4 °F (Normal)">98.0 °F - 98.4 °F (Normal)</option>
+              <option value="97.5 °F (Mildly Low)">97.5 °F (Mildly Low)</option>
+              <option value="96.5 °F (Low / Hypothermia)">96.5 °F (Low / Hypothermia)</option>
+              <option value="99.5 °F (Low Grade Fever)">99.5 °F (Low Grade Fever)</option>
+              <option value="100.4 °F (Fever)">100.4 °F (Fever)</option>
+              <option value="102.0 °F+ (High Fever)">102.0 °F+ (High Fever)</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="vitalsPulseInput">💓 Pulse Rate</label>
-            <input type="text" id="vitalsPulseInput" class="form-control" placeholder="e.g. 72 bpm">
+            <label for="vitalsPulseSelect">💓 Pulse Rate</label>
+            <select id="vitalsPulseSelect" class="form-control">
+              <option value="">-- Select Pulse --</option>
+              <option value="72 bpm (Normal / Balanced)">72 bpm (Normal / Balanced)</option>
+              <option value="60 - 70 bpm (Normal Low)">60 - 70 bpm (Normal Low)</option>
+              <option value="50 - 60 bpm (Slow / Bradycardia)">50 - 60 bpm (Slow / Bradycardia)</option>
+              <option value="80 - 90 bpm (Elevated)">80 - 90 bpm (Elevated)</option>
+              <option value=">100 bpm (Fast / Tachycardia)">&gt;100 bpm (Fast / Tachycardia)</option>
+              <option value="Deep / Weak Pulse">Deep / Weak Pulse</option>
+              <option value="Slippery / Rapid Pulse">Slippery / Rapid Pulse</option>
+              <option value="Wiry / Tense Pulse">Wiry / Tense Pulse</option>
+            </select>
           </div>
+        </div>
+
+        <!-- Urine Analysis Section -->
+        <div style="background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 10px 14px; border-radius: var(--radius-sm); margin: 20px 0 12px;">
+          <h4 style="margin: 0; font-size: 14px; color: #0369a1; display: flex; align-items: center; gap: 6px;">🚽 Urine Analysis</h4>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;" class="mb-3">
+          <div class="form-group">
+            <label for="vitalsUrineColorSelect">🟡 Color</label>
+            <select id="vitalsUrineColorSelect" class="form-control">
+              <option value="">-- Select Color --</option>
+              <option value="Straw Yellow (Normal)">Straw Yellow (Normal)</option>
+              <option value="Pale / Clear">Pale / Clear</option>
+              <option value="Dark Yellow / Amber">Dark Yellow / Amber</option>
+              <option value="Reddish / Pinkish">Reddish / Pinkish</option>
+              <option value="Cloudy / Turbid">Cloudy / Turbid</option>
+              <option value="Brownish / Tea Color">Brownish / Tea Color</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vitalsUrineUrgencySelect">⚡ Urgency</label>
+            <select id="vitalsUrineUrgencySelect" class="form-control">
+              <option value="">-- Select Urgency --</option>
+              <option value="Normal">Normal</option>
+              <option value="Sudden / Urgent">Sudden / Urgent</option>
+              <option value="Nocturia (Night Urgency)">Nocturia (Night Urgency)</option>
+              <option value="Incontinence / Leakage">Incontinence / Leakage</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vitalsUrineFoamingSelect">🫧 Foaming</label>
+            <select id="vitalsUrineFoamingSelect" class="form-control">
+              <option value="">-- Select Foaming --</option>
+              <option value="None / Clear">None / Clear</option>
+              <option value="Mild Foaming">Mild Foaming</option>
+              <option value="Persistent / Excessive Foaming">Persistent / Excessive Foaming</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vitalsUrineFreqSelect">🕒 Frequency (per day)</label>
+            <select id="vitalsUrineFreqSelect" class="form-control">
+              <option value="">-- Select Frequency --</option>
+              <option value="4 - 6 times / day (Normal)">4 - 6 times / day (Normal)</option>
+              <option value="1 - 3 times / day (Infrequent)">1 - 3 times / day (Infrequent)</option>
+              <option value="7 - 10 times / day (Frequent)">7 - 10 times / day (Frequent)</option>
+              <option value=">10 times / day (Very Frequent)">&gt;10 times / day (Very Frequent)</option>
+              <option value="Frequent Night Urination (3+ times)">Frequent Night Urination (3+ times)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vitalsUrinePainSelect">🔥 Pain / Burning while going</label>
+            <select id="vitalsUrinePainSelect" class="form-control">
+              <option value="">-- Select Pain Status --</option>
+              <option value="No Pain (Normal)">No Pain (Normal)</option>
+              <option value="Mild Burning">Mild Burning</option>
+              <option value="Severe Burning / Pain (Dysuria)">Severe Burning / Pain (Dysuria)</option>
+              <option value="Discomfort / Hesitancy">Discomfort / Hesitancy</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Bowel Movement Section -->
+        <div style="background-color: #fefce8; border-left: 4px solid #ca8a04; padding: 10px 14px; border-radius: var(--radius-sm); margin: 20px 0 12px;">
+          <h4 style="margin: 0; font-size: 14px; color: #854d0e; display: flex; align-items: center; gap: 6px;">💩 Bowel Movement</h4>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="vitalsBowelMovementSelect">📦 Elimination / Stool Pattern</label>
+          <select id="vitalsBowelMovementSelect" class="form-control">
+            <option value="">-- Select Bowel Movement --</option>
+            <option value="Elimination (Normal / Smooth)">Elimination (Normal / Smooth)</option>
+            <option value="Constipation">Constipation</option>
+            <option value="Loose Motions / Diarrhea">Loose Motions / Diarrhea</option>
+            <option value="Irregular / Alternating">Irregular / Alternating</option>
+            <option value="Incomplete Elimination">Incomplete Elimination</option>
+            <option value="Hard Stools">Hard Stools</option>
+            <option value="Mucus in Stools">Mucus in Stools</option>
+          </select>
         </div>
 
         <div class="form-group mb-3">

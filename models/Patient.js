@@ -13,6 +13,12 @@ const clinicalRecordSchema = new mongoose.Schema({
   temperature: { type: String, default: '' },
   pulseRate: { type: String, default: '' },
   bodyType: { type: String, default: '' },
+  urineColor: { type: String, default: '' },
+  urineUrgency: { type: String, default: '' },
+  urineFoaming: { type: String, default: '' },
+  urineFrequency: { type: String, default: '' },
+  urinePain: { type: String, default: '' },
+  bowelMovement: { type: String, default: '' },
   tongueDescription: { type: String, default: '' },
   tongueImage: { type: String, default: '' },
   updatedAt: { type: Date, default: Date.now }

@@ -282,13 +282,41 @@ async function handlePatientLookup() {
     const clinical = patient.clinicalRecord || {};
     const vitalsCard = document.getElementById('clientVitalsCard');
     const tongueWrapper = document.getElementById('displayClientTongueWrapper');
+    const bowelWrapper = document.getElementById('displayClientBowelWrapper');
+    const urineWrapper = document.getElementById('displayClientUrineWrapper');
 
-    if (clinical.bp || clinical.temperature || clinical.pulseRate || clinical.bodyType || clinical.tongueDescription) {
+    const hasClinicalData = clinical.bp || clinical.temperature || clinical.pulseRate || 
+      clinical.bodyType || clinical.bowelMovement || clinical.urineColor || 
+      clinical.urineUrgency || clinical.urineFoaming || clinical.urineFrequency || 
+      clinical.urinePain || clinical.tongueDescription;
+
+    if (hasClinicalData) {
       document.getElementById('displayClientBp').textContent = clinical.bp || 'Not recorded';
       document.getElementById('displayClientTemp').textContent = clinical.temperature || 'Not recorded';
       document.getElementById('displayClientPulse').textContent = clinical.pulseRate || 'Not recorded';
       document.getElementById('displayClientBodyType').textContent = clinical.bodyType || 'Not specified';
       
+      if (clinical.bowelMovement) {
+        document.getElementById('displayClientBowel').textContent = clinical.bowelMovement;
+        bowelWrapper.style.display = 'block';
+      } else {
+        bowelWrapper.style.display = 'none';
+      }
+
+      const urineParts = [];
+      if (clinical.urineColor) urineParts.push(`Color: ${clinical.urineColor}`);
+      if (clinical.urineUrgency) urineParts.push(`Urgency: ${clinical.urineUrgency}`);
+      if (clinical.urineFoaming) urineParts.push(`Foaming: ${clinical.urineFoaming}`);
+      if (clinical.urineFrequency) urineParts.push(`Frequency: ${clinical.urineFrequency}`);
+      if (clinical.urinePain) urineParts.push(`Pain: ${clinical.urinePain}`);
+
+      if (urineParts.length > 0) {
+        document.getElementById('displayClientUrineDetails').textContent = urineParts.join(' | ');
+        urineWrapper.style.display = 'block';
+      } else {
+        urineWrapper.style.display = 'none';
+      }
+
       if (clinical.tongueDescription) {
         document.getElementById('displayClientTongueDesc').textContent = clinical.tongueDescription;
         tongueWrapper.style.display = 'block';
